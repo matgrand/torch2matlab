@@ -15,9 +15,10 @@ fi
 # compile the C++ code
 echo "Compiling net_forward_mex.cpp..."
 libtorch_path="$(pwd)/libtorch"
+MATLAB_PATH="/nfsd/opt/matlab2024b" # CHANGE ME <- this is the path to your MATLAB installation
 mkdir build
 cd build
-cmake .. -DCMAKE_PREFIX_PATH="$libtorch_path"
+cmake .. -DCMAKE_PREFIX_PATH="$libtorch_path" -DMatlab_ROOT_DIR="$MATLAB_PATH"
 make
 
 cd ..

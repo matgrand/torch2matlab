@@ -2,12 +2,6 @@
 
 clear
 
-# create the .net file
-echo "Creating the .net file with python..."
-echo "----- Python --------------------------------------------------------------------"
-python create_net.py
-echo "---------------------------------------------------------------------------------"
-
 if [ ! -d "$(pwd)/libtorch" ]; then
     echo "libtorch directory not found. Downloading libtorch..."
     wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip -O libtorch.zip
@@ -16,6 +10,12 @@ if [ ! -d "$(pwd)/libtorch" ]; then
     rm libtorch.zip
     echo "libtorch downloaded and extracted."
 fi
+
+# create the .net file
+echo "Creating the .net file with python..."
+echo "----- Python --------------------------------------------------------------------"
+python create_net.py
+echo "---------------------------------------------------------------------------------"
 
 # compile the C++ code
 echo "Compiling net_forward_mex.cpp..."

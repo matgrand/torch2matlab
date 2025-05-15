@@ -23,3 +23,10 @@ print(f'y -> {y}')
 
 #save the model
 torch.jit.script(net).save('net.pt')
+
+# convert to onnx
+dummy_input = torch.randn(1, 2, dtype=torch.float64)
+torch.onnx.export(net, dummy_input, 'net.onnx', export_params=True,
+                  opset_version=12, do_constant_folding=True,
+                  input_names=['x'], output_names=['y'])
+

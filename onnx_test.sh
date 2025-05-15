@@ -2,26 +2,30 @@
 
 clear
 
-# download libtorch if not present
-if [ ! -d "$(pwd)/libtorch" ]; then
-    echo "libtorch directory not found. Downloading libtorch..."
-    wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip -O libtorch.zip
-    echo "Unzipping libtorch..."
-    unzip libtorch.zip
-    rm libtorch.zip
-    echo "libtorch downloaded and extracted."
+
+if [ ! -d "$(pwd)/onnxruntime-linux-x64-1.22.0" ]; then
+    wget https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-x64-1.22.0.tgz
+    tar -xzf onnxruntime-linux-x64-1.22.0.tgz
+    rm onnxruntime-linux-x64-1.22.0.tgz
+    echo "onnxruntime downloaded and extracted."
 fi
 
+export onnx_dir="$(pwd)/onnxruntime-linux-x64-1.22.0"
+
+echo "onnxruntime directory: $onnx_dir"
+
 # compile the C++ code
-echo "Compiling net_forward_mex.cpp..."
-libtorch_path="$(pwd)/libtorch"
-MATLAB_PATH="/nfsd/opt/matlab2024b" # CHANGE ME <- this is the path to your MATLAB installation
+echo "Compiling..."
+cp onnx_cmake/CMakeLists.txt CMakeLists.txt  # copy the CMakeLists.txt file to the current directory
+rm -rf build  # remove the build directory if it exists
 mkdir build
 cd build
-cmake .. -DCMAKE_PREFIX_PATH="$libtorch_path" -DMatlab_ROOT_DIR="$MATLAB_PATH"
+cmake .. -DCMAKE_PREFIX_PATH="$onnx_dir"
 make
 
 cd ..
+rm CMakeLists.txt  # remove the copied CMakeLists.txt file
+echo "Compilation completed."
 
 # create the .net file with python
 echo "Creating the .net file with python..."
@@ -36,11 +40,7 @@ echo "----- C++ ----------------------------------------------------------------
 echo "---------------------------------------------------------------------------------"
 echo "Standalone version test completed."
 
-# test MATLAB version
-
-# for now this is forced:
-export LD_PRELOAD="$(pwd)/libtorch/lib/libtorch.so"
-
+# # test MATLAB version
 echo "----- Matlab --------------------------------------------------------------------"
 # start MATLAB -> run the script forward_test.m -> exit
 matlab -nodisplay -nosplash -nodesktop -r "run('forward_test.m'); exit;"

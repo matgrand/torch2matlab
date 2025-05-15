@@ -14,7 +14,7 @@ option(BUILD_MEX "Build MEX file" ON)
 
 # Add standalone executable if requested
 if(BUILD_STANDALONE)
-    add_executable(net_forward net_forward.cpp)
+    add_executable(net_forward torch_test.cpp)
     target_compile_definitions(net_forward PRIVATE STANDALONE_MODE)
     target_include_directories(net_forward PRIVATE ${TORCH_INCLUDE_DIRS})
     target_link_libraries(net_forward "${TORCH_LIBRARIES}")
@@ -25,7 +25,7 @@ endif()
 if(BUILD_MEX)
     matlab_add_mex(
         NAME net_forward_mex
-        SRC net_forward.cpp
+        SRC torch_test.cpp
         LINK_TO ${TORCH_LIBRARIES} ${Matlab_MX_LIBRARY} ${Matlab_MEX_LIBRARY}
     )
 

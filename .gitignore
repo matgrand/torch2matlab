@@ -1,3 +1,5 @@
 build/*
 libtorch/*
 net.pt
+net.onnx
+onnxruntime*

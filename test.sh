@@ -1,4 +1,13 @@
 #!/bin/bash
+
+clear
+
+# create the .net file
+echo "Creating the .net file with python..."
+echo "----- Python --------------------------------------------------------------------"
+python create_net.py
+echo "---------------------------------------------------------------------------------"
+
 if [ ! -d "$(pwd)/libtorch" ]; then
     echo "libtorch directory not found. Downloading libtorch..."
     wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip -O libtorch.zip
@@ -8,6 +17,7 @@ if [ ! -d "$(pwd)/libtorch" ]; then
     echo "libtorch downloaded and extracted."
 fi
 
+# compile the C++ code
 echo "Compiling net_forward_mex.cpp..."
 libtorch_path="$(pwd)/libtorch"
 mkdir build
@@ -17,26 +27,21 @@ make
 
 cd ..
 
-# test standalone version
-echo "Testing standalone version..."
-echo "---------------------------------------------------------"
+# test standalone C++ version
+echo "Testing standalone C++ version..."
+echo "----- C++ -----------------------------------------------------------------------"
 ./build/net_forward
-echo "---------------------------------------------------------"
+echo "---------------------------------------------------------------------------------"
 echo "Standalone version test completed."
 
-# copy libs to build directory
-cp -r libtorch/lib build/
-
+# test MATLAB version
 # # for now this is forced:
 # export LD_PRELOAD="$(pwd)/libtorch/lib/libtorch_cpu.so:$(pwd)/libtorch/lib/libtorch.so"
 export LD_PRELOAD="$(pwd)/libtorch/lib/libtorch.so"
-
-# export LD_LIBRARY_PATH="$(pwd)/libtorch/lib:${LD_LIBRARY_PATH}" # doesnt work
-
-
+echo "----- Matlab --------------------------------------------------------------------"
 # start MATLAB -> run the script forward_test.m -> exit
 matlab -nodisplay -nosplash -nodesktop -r "run('forward_test.m'); exit;"
-
-
+echo "---------------------------------------------------------------------------------"
+echo "MATLAB version test completed."
 
 

@@ -11,12 +11,6 @@ if [ ! -d "$(pwd)/libtorch" ]; then
     echo "libtorch downloaded and extracted."
 fi
 
-# create the .net file
-echo "Creating the .net file with python..."
-echo "----- Python --------------------------------------------------------------------"
-python create_net.py
-echo "---------------------------------------------------------------------------------"
-
 # compile the C++ code
 echo "Compiling net_forward_mex.cpp..."
 libtorch_path="$(pwd)/libtorch"
@@ -24,6 +18,12 @@ mkdir build
 cd build
 cmake .. -DCMAKE_PREFIX_PATH="$libtorch_path"
 make
+
+# create the .net file
+echo "Creating the .net file with python..."
+echo "----- Python --------------------------------------------------------------------"
+python create_net.py
+echo "---------------------------------------------------------------------------------"
 
 cd ..
 

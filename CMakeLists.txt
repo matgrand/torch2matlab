@@ -30,7 +30,7 @@ if(BUILD_MEX)
     )
 
     # Set include directories for the MEX file
-    target_include_directories(net_forward_mex PRIVATE 
+    target_include_directories(net_fsorward_mex PRIVATE 
         ${Matlab_INCLUDE_DIRS}
         ${TORCH_INCLUDE_DIRS}
     )

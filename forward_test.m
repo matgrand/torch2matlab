@@ -6,7 +6,6 @@ try
     x = [3.0, 5.0];
 
     tic
-    % y = net_forward(x);
     y = net_forward_mex(x);
     toc
 
@@ -14,15 +13,23 @@ try
     fprintf('x -> [ %s ]\n', num2str(x, '%+.4f '));
     fprintf('y -> [ %s ]\n', num2str(y, '%+.4f '));
 
-
-    % test if matlab linear algebra still works
-    A = rand(1000);
-    B = A * A';  % symmetric positive-definite
-    chol(B);     % Cholesky decomposition (calls LAPACK via MKL)
-    A = rand(5000);
-    B = rand(5000);
-    C = A * B;  % should call dgemm from MKL
-
+    N = 100000;
+    fprintf('Testing inference time for %d iterations...\n', N);
+    % evaluate inference time in 10k iterations
+    % warmup
+    for i = 1:10
+        x = rand(1, 2);
+        y = net_forward_mex(x);
+    end
+    times = zeros(1, N);
+    for i = 1:N
+        tic
+        x = rand(1, 2);
+        y = net_forward_mex(x);
+        times(i) = toc;
+    end
+    fprintf('Inference time -> %.1f ± %.1f [μs] | max %.1f [μs]\n', ...
+        mean(times) * 1e6, std(times) * 1e6, max(times) * 1e6);
 
 catch ME
     fprintf('Error: %s\n', ME.message);
